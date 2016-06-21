@@ -2,6 +2,9 @@ import assert from 'assert';
 import waterlinePaginator from '../lib';
 // import waterline from 'waterline';
 
+var models = require('./models');
+var waterline;
+
 describe('waterline-paginator', function () {
   it('should be able to populate!', function () {
     var data = [];
@@ -58,6 +61,18 @@ describe('waterline-paginator', function () {
     assert.deepEqual(data, conditions);
   });
 
+  it('should be able to handle error!', function (done) {
+    var myError = {
+      message: 'query error'
+    };
+    var func = waterlinePaginator._onError(function (error, data) {
+      assert(error);
+      assert.deepEqual(data, myError);
+      done();
+    });
+    func(myError);
+  });
+
   it('should not be able to paginate!', function () {
     var catched = false;
     try {
@@ -75,11 +90,11 @@ describe('waterline-paginator', function () {
   it('should not be able to paginate!', function () {
     var catched = false;
     try {
-      waterlinePaginator.paginate();
+      waterlinePaginator.paginate(null, function () {
+      });
     } catch (e) {
       console.log(e);
-      assert(e.message === 'Callback must not be null');
-
+      assert(e.message === 'data must not be null');
       catched = true;
     }
     assert(catched);
@@ -91,8 +106,97 @@ describe('waterline-paginator', function () {
       waterlinePaginator.paginate();
     } catch (e) {
       console.log(e);
+      assert(e.message === 'Callback must not be null');
       catched = true;
     }
     assert(catched);
+  });
+
+  it('should be able to paginate!', function (done) {
+    models(function (error, ontology) {
+      waterline = ontology;
+      var options = {
+        model: ontology.collections.model
+      };
+      waterlinePaginator.paginate(options, function (error, data) {
+        assert(!error);
+        assert.deepEqual(data, {
+          total: 0,
+          page: 0,
+          count: 0,
+          results: []
+        });
+        done();
+      });
+    });
+  });
+
+  it('should be able to paginate!', function (done) {
+    var model = waterline.collections.model;
+    model.create([
+      {
+        name: '1',
+        type: '1'
+      }, {
+        name: '2',
+        type: '2'
+      }, {
+        name: '3',
+        type: '3'
+      }, {
+        name: '1',
+        type: '1'
+      },
+      {
+        name: '1',
+        type: '1'
+      }
+    ]).then(function (results) {
+      return Promise.resolve(results);
+    }).then(function () {
+      var options = {
+        model: model
+      };
+      waterlinePaginator.paginate(options, function (error, data) {
+        assert(!error);
+        assert.deepEqual(data, {
+          total: 1,
+          count: 5,
+          page: 1,
+          results:
+          [
+            {
+              name: '1',
+              type: '1',
+              id: 1
+            },
+            {
+              name: '2',
+              type: '2',
+              id: 2
+            },
+            {
+              name: '3',
+              type: '3',
+              id: 3
+            },
+            {
+              name: '1',
+              type: '1',
+              id: 4
+            },
+            {
+              name: '1',
+              type: '1',
+              id: 5
+            }
+          ]
+        });
+        done();
+      });
+    }).fail(function (error) {
+      console.log(error);
+      done();
+    });
   });
 });

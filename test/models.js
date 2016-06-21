@@ -19,8 +19,8 @@ var model = {
   identity: 'model',
   schema: true,
   tableName: 'area',
-  autoCreatedAt: true,
-  autoUpdatedAt: true,
+  autoCreatedAt: false,
+  autoUpdatedAt: false,
   attributes: {
     name: 'string',
     type: 'string'
