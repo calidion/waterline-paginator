@@ -12,8 +12,48 @@ $ npm install --save waterline-paginator
 ```js
 var waterlinePaginator = require('waterline-paginator');
 
-waterlinePaginator('Rainbow');
+var User = {
+  connection: 'default',
+  identity: 'user',
+  schema: true,
+  tableName: 'area',
+  autoCreatedAt: false,
+  autoUpdatedAt: false,
+  attributes: {
+    name: 'string',
+    type: 'string',
+    logo: {
+      model: 'image'
+    }
+  }
+};
+
+var image = {
+  connection: 'default',
+  identity: 'image',
+  schema: true,
+  tableName: 'area',
+  autoCreatedAt: false,
+  autoUpdatedAt: false,
+  attributes: {
+    hash: 'string',
+    url: 'string'
+  }
+};
+
+var options = {
+  model: User,
+  populates: [
+    'logo'
+  ]
+};
+waterlinePaginator.paginate(options, function (error, paginatedList) {
+  // paginatedList is what you will get
+});
 ```
+
+<code>paginatedList</code> is what you will get as the paginated result.
+
 ## License
 
 Apache-2.0 © [calidion](blog.3gcnbeta.com)
