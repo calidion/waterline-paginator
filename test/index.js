@@ -199,4 +199,47 @@ describe('waterline-paginator', function () {
       done();
     });
   });
+
+  it('should be able to paginate with populates!', function (done) {
+    var model = waterline.collections.model;
+    var image = waterline.collections.image;
+    image.create({
+      hash: 'sdf',
+      url: 'sdfsdf'
+    }).then(function (anImage) {
+      model.create([
+        {
+          name: '1',
+          type: '1',
+          logo: anImage.id
+        }, {
+          name: '2',
+          type: '2',
+          logo: anImage.id
+        }, {
+          name: '3',
+          type: '3'
+        }
+      ]).then(function (results) {
+        return Promise.resolve(results);
+      }).then(function () {
+        var options = {
+          model: model,
+          populates: [
+            'logo'
+          ]
+        };
+        waterlinePaginator.paginate(options, function (error) {
+          assert(!error);
+          done();
+        });
+      }).fail(function (error) {
+        console.log(error);
+        done();
+      });
+    }).fail(function (error) {
+      console.log(error);
+      done();
+    });
+  });
 });
