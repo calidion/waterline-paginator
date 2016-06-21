@@ -43,6 +43,13 @@ var image = {
 
 var options = {
   model: User,
+  conditions: {
+    name: 'eric',
+    type: 'employee'
+  },
+  page: 1,
+  limit: 10,
+  sorts: ['id asc', 'name desc'],
   populates: [
     'logo'
   ]
