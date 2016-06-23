@@ -12,6 +12,7 @@ $ npm install --save waterline-paginator
 ```js
 var waterlinePaginator = require('waterline-paginator');
 
+// Model User
 var User = {
   connection: 'default',
   identity: 'user',
@@ -28,7 +29,8 @@ var User = {
   }
 };
 
-var image = {
+// Model Image
+var Image = {
   connection: 'default',
   identity: 'image',
   schema: true,
@@ -41,12 +43,23 @@ var image = {
   }
 };
 
+
+// Pagination Options
 var options = {
   model: User,
+  conditions: {
+    name: 'eric',
+    type: 'employee'
+  },
+  page: 1,
+  limit: 10,
+  sorts: ['id asc', 'name desc'],
   populates: [
     'logo'
   ]
 };
+
+// Invocation of pagination
 waterlinePaginator.paginate(options, function (error, paginatedList) {
   // paginatedList is what you will get
 });
