@@ -305,18 +305,21 @@ describe('waterline-paginator', function () {
     });
   });
 
-  it("should go with _onAsyncImageEnd", function (done) {
-    var func = waterlinePaginator._onAsyncImageEnd(null, function (error) {
-      assert(error);
-      done();
-    });
-    func(true);
-  });
+  // it("should go with _onAsyncImageEnd", function (done) {
+  //   var func = waterlinePaginator._onAsyncImageEnd(null, function (error) {
+  //     assert(error);
+  //     done();
+  //   });
+  //   func(true);
+  // });
 
   it("should go with _onFetchImage", function (done) {
-    var func = waterlinePaginator._onFetchImage([1, 2, 3], 0, function (error, data) {
+    var func = waterlinePaginator._onFetchImage({
+      results: [{}, {}, {}]
+    }, 0, function (error, data) {
       assert(!error);
-      assert(data === 1);
+      assert(data.sis.length === 0);
+      assert(data.images.length === 0);
       done();
     });
     func(true);
