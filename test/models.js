@@ -14,9 +14,9 @@ var config = {
   }
 };
 
-var model = {
+var area = {
   connection: 'default',
-  identity: 'model',
+  identity: 'area',
   schema: true,
   tableName: 'area',
   autoCreatedAt: false,
@@ -25,7 +25,7 @@ var model = {
     name: 'string',
     type: 'string',
     logo: {
-      model: 'image'
+      model: 'logo'
     }
   }
 };
@@ -34,7 +34,7 @@ var image = {
   connection: 'default',
   identity: 'image',
   schema: true,
-  tableName: 'area',
+  tableName: 'image',
   autoCreatedAt: false,
   autoUpdatedAt: false,
   attributes: {
@@ -43,15 +43,64 @@ var image = {
   }
 };
 
-var waterline = new Waterline();
+var logo = {
+  connection: 'default',
+  identity: 'logo',
+  schema: true,
+  tableName: 'logo',
+  autoCreatedAt: false,
+  autoUpdatedAt: false,
+  attributes: {
+    hash: 'string',
+    url: 'string'
+  }
+};
 
-var connection = Waterline.Collection.extend(model);
-waterline.loadCollection(connection);
-var connection1 = Waterline.Collection.extend(image);
-waterline.loadCollection(connection1);
+var areaimage = {
+  connection: 'default',
+  identity: 'areaimage',
+  schema: true,
+  tableName: 'areaimage',
+  autoCreatedAt: false,
+  autoUpdatedAt: false,
+  attributes: {
+    area: {
+      model: 'area'
+    },
+    image: {
+      model: 'image'
+    }
+  }
+};
+
+var userarea = {
+  connection: 'default',
+  identity: 'userarea',
+  schema: true,
+  tableName: 'areaimage',
+  autoCreatedAt: false,
+  autoUpdatedAt: false,
+  attributes: {
+    area: {
+      model: 'area'
+    },
+    name: {
+      type: 'string'
+    }
+  }
+};
+
+var waterline = new Waterline();
+var models = [image, logo, area, areaimage, userarea];
+for (var i = 0; i < models.length; i++) {
+  var connection = Waterline.Collection.extend(models[i]);
+  waterline.loadCollection(connection);
+}
+
 export default function name(cb) {
   waterline.initialize(config, cb);
-  //  waterline.initialize(config, function (error, ontology) {
-  //   // ontology.collections[model.name.toLowerCase()];
-  // });
+  process.on('uncaughtException', function (e) {
+    console.log(e.stack);
+    console.log('inside exception');
+  });
 }

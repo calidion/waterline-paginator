@@ -80,7 +80,7 @@ describe('waterline-paginator', function () {
       }, function () {
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
       assert(e.message === 'Model must not be null');
       catched = true;
     }
@@ -93,7 +93,7 @@ describe('waterline-paginator', function () {
       waterlinePaginator.paginate(null, function () {
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
       assert(e.message === 'data must not be null');
       catched = true;
     }
@@ -105,7 +105,7 @@ describe('waterline-paginator', function () {
     try {
       waterlinePaginator.paginate();
     } catch (e) {
-      console.log(e);
+      console.error(e);
       assert(e.message === 'Callback must not be null');
       catched = true;
     }
@@ -116,7 +116,7 @@ describe('waterline-paginator', function () {
     models(function (error, ontology) {
       waterline = ontology;
       var options = {
-        model: ontology.collections.model
+        model: ontology.collections.area
       };
       waterlinePaginator.paginate(options, function (error, data) {
         assert(!error);
@@ -132,8 +132,8 @@ describe('waterline-paginator', function () {
   });
 
   it('should be able to paginate!', function (done) {
-    var model = waterline.collections.model;
-    model.create([
+    var area = waterline.collections.area;
+    area.create([
       {
         name: '1',
         type: '1'
@@ -155,7 +155,7 @@ describe('waterline-paginator', function () {
       return Promise.resolve(results);
     }).then(function () {
       var options = {
-        model: model
+        model: area
       };
       waterlinePaginator.paginate(options, function (error, data) {
         assert(!error);
@@ -195,19 +195,19 @@ describe('waterline-paginator', function () {
         done();
       });
     }).fail(function (error) {
-      console.log(error);
+      console.error(error);
       done();
     });
   });
 
   it('should be able to paginate with populates!', function (done) {
-    var model = waterline.collections.model;
-    var image = waterline.collections.image;
-    image.create({
+    var area = waterline.collections.area;
+    var logo = waterline.collections.logo;
+    logo.create({
       hash: 'sdf',
       url: 'sdfsdf'
     }).then(function (anImage) {
-      model.create([
+      area.create([
         {
           name: '1',
           type: '1',
@@ -224,22 +224,84 @@ describe('waterline-paginator', function () {
         return Promise.resolve(results);
       }).then(function () {
         var options = {
-          model: model,
+          model: area,
           populates: [
             'logo'
           ]
         };
-        waterlinePaginator.paginate(options, function (error) {
+        waterlinePaginator.paginate(options, function (error, data) {
           assert(!error);
+          assert(data.total > 0);
+          assert(data.count > 0);
+          assert(data.page > 0);
+          assert(data.results.length > 0);
           done();
         });
       }).fail(function (error) {
-        console.log(error);
+        console.error(error);
         done();
       });
     }).fail(function (error) {
-      console.log(error);
+      console.error(error);
       done();
+    });
+  });
+
+  it('should be able to paginate with populates and images!', function (done) {
+    var area = waterline.collections.area;
+    var image = waterline.collections.image;
+    var areaimage = waterline.collections.areaimage;
+    var userarea = waterline.collections.userarea;
+
+    var anImage;
+    var anArea;
+    // var anAreaImage;
+    // var anUserArea;
+
+    Promise.all([image.create({
+      hash: 'sdf',
+      url: 'sdfsdf'
+    }), area.create({
+      name: '3',
+      type: '3'
+    })
+    ]).then(function (data) {
+      anImage = data[0];
+      anArea = data[1];
+      return Promise.all([areaimage.create({
+        area: anArea.id,
+        image: anImage.id
+      }), userarea.create({
+        name: 'sodfsdf',
+        area: anArea.id
+      })]).then(function () {
+        return Promise.resolve(0);
+      }, function (error) {
+        console.error(error);
+      });
+    }).then(function () {
+      var options = {
+        model: userarea,
+        imageModel: areaimage,
+        populates: ['area'],
+        linkKey: {
+          key: 'area',
+          item: 'area'
+        },
+        conditions: {
+          id: 1
+        }
+      };
+      waterlinePaginator.paginate(options, function (error, data) {
+        assert(!error);
+        assert(data.total === 1);
+        assert(data.count === 1);
+        assert(data.page > 0);
+        assert(data.results.length === 1);
+        assert(data.results[0].sis.length === 1);
+        assert(data.results[0].images.length === 1);
+        done();
+      });
     });
   });
 });
