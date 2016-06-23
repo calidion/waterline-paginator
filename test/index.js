@@ -309,14 +309,13 @@ describe('waterline-paginator', function () {
         }
       };
       waterlinePaginator.paginate(options, function (error, data) {
-        console.log(data);
         assert(!error);
-        // assert(data.total === 1);
-        // assert(data.count === 1);
-        // assert(data.page > 0);
-        // assert(data.results.length === 1);
-        // assert(data.results[0].sis.length === 1);
-        // assert(data.results[0].images.length === 1);
+        assert(data.total === 1);
+        assert(data.count === 4);
+        assert(data.page === 1);
+        assert(data.results.length > 1);
+        assert(data.results[0].sis.length === 2);
+        assert(data.results[0].images.length === 2);
         done();
       });
     });
@@ -331,9 +330,7 @@ describe('waterline-paginator', function () {
   // });
 
   it("should go with _onFetchImage", function (done) {
-    var func = waterlinePaginator._onFetchImage({
-      results: [{}, {}, {}]
-    }, 0, function (error, data) {
+    var func = waterlinePaginator._onFetchImage([{}, {}, {}], 0, function (error, data) {
       assert(!error);
       assert(data.sis.length === 0);
       assert(data.images.length === 0);
@@ -357,9 +354,7 @@ describe('waterline-paginator', function () {
       {
         linkKey: {
         }
-      }, {
-        results: [1, 2, 3, 4]
-      }, {
+      }, [1, 2, 3, 4], {
         id: 1
       }, 0, function (error, data) {
         assert(error === null);
