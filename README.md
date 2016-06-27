@@ -55,13 +55,20 @@ var options = {
   limit: 10,
   sorts: ['id asc', 'name desc'],
   populates: [
-    'logo'
-  ]
+    'logo', 'user'
+  ],
+  // For Image Fetching
+  linkKey: {
+    key: 'logo',
+    item: 'logo'
+  },
+  imageModel: UserLogo
 };
 
 // Invocation of pagination
 waterlinePaginator.paginate(options, function (error, paginatedList) {
   // paginatedList is what you will get
+  // paginatedList.results is the list of data
 });
 ```
 
