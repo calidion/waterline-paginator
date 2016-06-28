@@ -117,7 +117,9 @@ describe('waterline-paginator', function () {
   // });
 
   it("should go with _onFetchImage", function (done) {
-    var func = waterlinePaginator._onFetchImage([{}, {}, {}], 0, function (error, data) {
+    var func = waterlinePaginator._onFetchImage({
+      results: [{}, {}, {}]
+    }, 0, function (error, data) {
       assert(!error);
       assert(data.sis.length === 0);
       assert(data.images.length === 0);

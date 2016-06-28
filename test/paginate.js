@@ -53,7 +53,7 @@ module.exports = function (config) {
         return Promise.resolve(results);
       }).then(function () {
         var options = {
-          model: area
+          model: waterline.collections.area
         };
         waterlinePaginator.paginate(options, function (error, data) {
           assert(!error);

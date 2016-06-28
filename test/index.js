@@ -8,4 +8,5 @@ require('./common');
 
 paginate(memory);
 // paginate(mongo);
+// console.log(mysql);
 // paginate(mysql);
