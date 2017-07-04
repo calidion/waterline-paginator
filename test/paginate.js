@@ -13,12 +13,37 @@ module.exports = function (config) {
         done();
       });
     });
+
     it('should be able to paginate!', function (done) {
       var options = {
         model: waterline.collections.area
       };
       waterlinePaginator.paginate(options, function (error, data) {
         assert(!error);
+        assert.deepEqual(data, {
+          total: 0,
+          page: 0,
+          count: 0,
+          results: []
+        });
+        done();
+      });
+    });
+
+    it('should be able to onPage!', function (done) {
+      const func = waterlinePaginator._onPage(function () { }, function (error) {
+        assert(error === true);
+        done();
+      });
+
+      func(true, 'any');
+    });
+
+    it('should be able to paginate!', function (done) {
+      var options = {
+        model: waterline.collections.area
+      };
+      waterlinePaginator.page(options).then(function (data) {
         assert.deepEqual(data, {
           total: 0,
           page: 0,

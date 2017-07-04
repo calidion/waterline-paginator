@@ -1,6 +1,6 @@
 {
   "name": "waterline-paginator",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "description": "paginator for waterline models",
   "homepage": "",
   "author": {
@@ -51,6 +51,6 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "async": "^2.0.0-rc.6"
+    "async": "^2.5.0"
   }
 }
